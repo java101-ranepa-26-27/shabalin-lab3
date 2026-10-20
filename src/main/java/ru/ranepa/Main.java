@@ -9,6 +9,8 @@ public class Main {
         System.out.println(student.average());
         student.printReport();
 
+
+
         // TODO: создать университет
         // TODO: зачислить 2–3 студентов и поставить оценки
         // TODO: перевести студента со средним баллом больше 2.5
