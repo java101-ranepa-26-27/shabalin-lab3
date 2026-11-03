@@ -4,57 +4,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class University {
-    private final List<Student> students;
-
-    public University() {
-        this.students = new ArrayList<>();
-    }
+    private final List<Student> students = new ArrayList<>();
 
     public Student addStudent(String name){
         Student student = Student.create(name);
         students.add(student);
-        System.out.println("Student added to University");
         return student;
     }
 
-    public Student expelleStudent(long id){
+    public void expelleStudent(long id){
         Student student = findStudentById(id);
-        if(student == null) {
-            throw new IllegalArgumentException("Student " + id + " not found");
-        }
-        // Проверка: если уже отчислен или выпустился
         if (student.getState() != State.ACTIVE) {
-            throw new IllegalArgumentException("Студент уже отчислен или закончил");
+            throw new IllegalArgumentException(student.getName() + " уже отчислен или закончил обучение");
         }
         student.setState(State.DISMISSED);
-        return student;
     }
 
     public void transferToNextCourse(long id) {
         Student student = findStudentById(id);
-        if(student == null) {
-            throw new IllegalArgumentException("Student " + id + " not found");
-        }
         if (student.getState() != State.ACTIVE) {
-            throw new IllegalArgumentException("Студент уже отчислен или закончил");
+            throw new IllegalArgumentException(student.getName() + " уже отчислен или закончил обучение");
         }
-        if (student.average() <= 2.5) {
-            System.out.println("Студент " + student.getName() + " отчислен: средний балл " + student.average());
+        else if (student.average() <= 2.5) {
+            System.out.println(student.getName() + " отчислен за плохую успеваемость");
             student.setState(State.DISMISSED);
-            return;
         }
-        if (student.getCourse() == 4) {
+        else if(student.getCourse() == 4) {
+            System.out.println(student.getName() + " Закончил обучение");
             student.setState(State.GRADUATED);
-            return;
+
         }
-        student.setCourse(student.getCourse() + 1);
+        else{
+            System.out.println(student.getName() + " Переведен на " + (student.getCourse() + 1) + " курс");
+            student.setCourse(student.getCourse() + 1);
+        }
+
     }
 
     public void addGrade(long id, int grade) {
         Student student = findStudentById(id);
-        if(student == null) {
-            throw new IllegalArgumentException("Student " + id + " not found");
-        }
         if (student.getState() != State.ACTIVE) {
             throw new IllegalArgumentException("Нельзя ставить оценку отчисленному");
         }
@@ -64,14 +52,10 @@ public class University {
         student.addGrade(grade);
     }
 
-    public String printSummary() {
-        StringBuilder sb = new StringBuilder("=== Сводка ===\n");
-        for (Student s : students) {
-            sb.append(s.toString()).append("\n");
+    public void printSummary() {
+        for(Student student : students){
+            student.printReport();
         }
-        String result = sb.toString();
-        System.out.print(result);
-        return result;
     }
 
     private Student findStudentById(long id){
@@ -80,6 +64,6 @@ public class University {
                 return student;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Студент не найден");
     }
 }
